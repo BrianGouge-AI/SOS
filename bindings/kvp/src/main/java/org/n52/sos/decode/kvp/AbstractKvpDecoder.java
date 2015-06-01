@@ -345,7 +345,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         TemporalFilter temporalFilter = new TemporalFilter();
         temporalFilter.setValueReference(valueReference);
         String[] times = value.split("/");
-        if (times.length == 1 && !temporalFilter.getOperator().equals(TimeOperator.TM_During)) {
+        if (times.length == 1) {
             TimeInstant ti = new TimeInstant();
             if (SosIndeterminateTime.contains(times[0])) {
                 ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(times[0]));
