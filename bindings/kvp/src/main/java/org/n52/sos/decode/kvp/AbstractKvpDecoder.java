@@ -40,6 +40,7 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.decode.Decoder;
@@ -75,7 +76,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Configurable
 public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceRequest<?>, Map<String, String>> {
@@ -83,6 +84,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractKvpDecoder.class);
 
     protected static final int VALID_COORDINATE_SIZE = 4;
+    private static final String ISO_8601_DURATION_INDICATOR = "P";
 
     private int storageEPSG;
 
@@ -142,7 +144,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set storage EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
      * @throws ConfigurationException
@@ -156,7 +158,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set storage 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
      * @throws ConfigurationException
@@ -170,7 +172,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set default response EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
      * @throws ConfigurationException
@@ -184,7 +186,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set default response 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
      * @throws ConfigurationException
@@ -337,13 +339,13 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         return namespaces;
     }
 
+
     private TemporalFilter createTemporalFilterFromValue(String value, String valueReference)
             throws OwsExceptionReport, DateTimeParseException {
         TemporalFilter temporalFilter = new TemporalFilter();
         temporalFilter.setValueReference(valueReference);
         String[] times = value.split("/");
-
-        if (times.length == 1) {
+        if (times.length == 1 && !temporalFilter.getOperator().equals(TimeOperator.TM_During)) {
             TimeInstant ti = new TimeInstant();
             if (SosIndeterminateTime.contains(times[0])) {
                 ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(times[0]));
@@ -355,23 +357,43 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
             temporalFilter.setOperator(TimeOperator.TM_Equals);
             temporalFilter.setTime(ti);
         } else if (times.length == 2) {
-            DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
-            // check if end time is a full ISO 8106 string
-            int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
-            DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
-            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
+            LOGGER.debug("Parsing temporal filter, start: {}, end: {}", times[0], times[1]);
+            DateTime start = null;
+            DateTime end = null;
+            if (times[0].startsWith(ISO_8601_DURATION_INDICATOR)) {
+                Period periodBeforeEndTime = Period.parse(times[0]);
+                // check if end time is a full ISO 8106 string
+                int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
+                DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
+                end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
+                start = origEnd.minus(periodBeforeEndTime);
+
+            } else if (times[1].startsWith(ISO_8601_DURATION_INDICATOR)) {
+                start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                Period periodAfterStartTime = Period.parse(times[1]);
+                end = start.plus(periodAfterStartTime);
+            } else {
+                start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                end = parseEndTime(times[1]);
+            }
             TimePeriod tp = new TimePeriod();
             tp.setStart(start);
             tp.setEnd(end);
+            LOGGER.debug("Temporal filter:{}", tp);
             temporalFilter.setOperator(TimeOperator.TM_During);
             temporalFilter.setTime(tp);
-
         } else {
-            throw new InvalidParameterValueException().withMessage("The paramter value '%s' is invalid!", value);
+            throw new InvalidParameterValueException().withMessage("The parameter value '%s' is invalid!", value);
         }
         return temporalFilter;
     }
 
+    private DateTime parseEndTime(final String time) throws DateTimeParseException {
+        // check if end time is a full ISO 8106 string
+        int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(time);
+        DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(time);
+        return DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
+    }
     protected String getSrsNamePrefix() {
         return ServiceConfiguration.getInstance().getSrsNamePrefix();
     }
@@ -387,7 +409,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     protected SwesExtension<SweText> getCrsExtension(String crs) {
         return getSweTextFor(OWSConstants.AdditionalRequestParams.crs.name(), crs);
     }
-    
+
     protected SwesExtension<SweText> getSweTextFor(String identifier, String value) {
         SweText text =
                 (SweText) new SweText().setValue(value).setIdentifier(identifier);
