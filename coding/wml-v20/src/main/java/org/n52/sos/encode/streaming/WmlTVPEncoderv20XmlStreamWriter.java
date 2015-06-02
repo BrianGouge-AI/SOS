@@ -29,10 +29,8 @@
 package org.n52.sos.encode.streaming;
 
 import java.util.List;
-
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
-
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.MultiObservationValues;
@@ -54,7 +52,7 @@ import org.n52.sos.w3c.W3CConstants;
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
  * encoded {@link OmObservation}s to stream
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -70,7 +68,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * constructor
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to write to stream
      */
@@ -89,6 +87,9 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         writeNewLine();
         writeMeasurementTimeseriesMetadata(observation.getPhenomenonTime().getGmlId());
         writeNewLine();
+
+        //TODO: AI add support for interpolation types
+
         if (observation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> observationValue = (SingleObservationValue<?>) observation.getValue();
             writeDefaultPointMetadata(observationValue.getValue().getUnit());
@@ -125,7 +126,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Close written wml:MeasurementTimeseries and om:result tags
-     * 
+     *
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
@@ -139,7 +140,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write timeseries metadata to stream
-     * 
+     *
      * @param id
      *            Observation id
      * @throws XMLStreamException
@@ -162,7 +163,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:defaultPointMetadata to stream
-     * 
+     *
      * @param unit
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
@@ -185,7 +186,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write UOM attribute to stream
-     * 
+     *
      * @param code
      *            UOM code
      * @throws XMLStreamException
@@ -200,7 +201,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:interpolationType to stream
-     * 
+     *
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
@@ -212,7 +213,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Get the {@link String} representation of {@link Value}
-     * 
+     *
      * @param value
      *            {@link Value} to get {@link String} representation from
      * @return {@link String} representation of {@link Value}
@@ -234,7 +235,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:point to stream
-     * 
+     *
      * @param time
      *            time as {@link String}
      * @param value
@@ -256,7 +257,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:MeasurementTVP to stream
-     * 
+     *
      * @param time
      *            time as {@link String}
      * @param value
@@ -278,7 +279,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:time to stream
-     * 
+     *
      * @param time
      *            time to write
      * @throws XMLStreamException
@@ -292,7 +293,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:value to stream
-     * 
+     *
      * @param value
      *            value to write
      * @throws XMLStreamException
@@ -312,7 +313,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write missing value metadata to stream
-     * 
+     *
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
