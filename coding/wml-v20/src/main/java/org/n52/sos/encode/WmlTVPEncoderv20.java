@@ -33,9 +33,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.stream.XMLStreamException;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.waterml.x20.DefaultTVPMeasurementMetadataDocument;
 import net.opengis.waterml.x20.MeasureTVPType;
@@ -43,8 +43,10 @@ import net.opengis.waterml.x20.MeasurementTimeseriesDocument;
 import net.opengis.waterml.x20.MeasurementTimeseriesType;
 import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
 import net.opengis.waterml.x20.TVPMeasurementMetadataType;
-
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.aquarius.InterpolationTypeMapper;
+import org.n52.sos.aquarius.ObservedPropertyMapper;
+import org.n52.sos.aquarius.OmObservationMapper;
 import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -74,19 +76,17 @@ import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
-
 /**
  * Encoder class for WaterML 2.0 TimeseriesValuePair (TVP)
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WmlTVPEncoderv20.class);
+    private final OmObservationMapper omObservationMapper;
 
     // TODO: change to correct conformance class
     private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(
@@ -99,7 +99,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     private static final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));;
+            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -108,6 +108,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     public WmlTVPEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
+        omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper(), new ObservedPropertyMapper());
     }
 
     @SuppressWarnings("unchecked")
@@ -144,7 +145,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(WaterMLConstants.WML_20_SCHEMA_LOCATION, WaterMLConstants.WML_20_TS_SCHEMA_LOCATION);
     }
-    
+
     @Override
     public boolean supportsResultStreamingForMergedValues() {
         return true;
@@ -155,20 +156,20 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
         if (element instanceof ObservationValue) {
-            encodedObject = encodeResult((ObservationValue<?>)element);
+            encodedObject = encodeResult((ObservationValue<?>) element);
         } else {
             encodedObject = super.encode(element, additionalValues);
         }
         return encodedObject;
     }
-    
+
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         encodingValues.setEncoder(this);
         if (objectToEncode instanceof OmObservation) {
             try {
-                new WmlTVPEncoderv20XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
+                new WmlTVPEncoderv20XmlStreamWriter().write((OmObservation) objectToEncode, outputStream, encodingValues);
             } catch (XMLStreamException xmlse) {
                 throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
             }
@@ -184,7 +185,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        return createMeasurementTimeseries((AbstractObservationValue<?>)observationValue);
+        return createMeasurementTimeseries((AbstractObservationValue<?>) observationValue);
     }
 
     @Override
@@ -203,7 +204,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     /**
      * Create a XML MeasurementTimeseries object from SOS observation for
      * om:result
-     * 
+     *
      * @param sosObservation
      *            SOS observation
      * @return XML MeasurementTimeseries object
@@ -224,9 +225,10 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         TVPMeasurementMetadataType defaultTVPMeasurementMetadata =
                 xbDefMeasureMetaComponent.addNewDefaultTVPMeasurementMetadata();
         defaultTVPMeasurementMetadata.addNewInterpolationType().setHref(
-                "http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
+                omObservationMapper.toInterpolationTypeHref(sosObservation));
+        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle(
+                omObservationMapper.toInterpolationTypeTitle(sosObservation));
 
-        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
         String unit = null;
         if (sosObservation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) sosObservation.getValue();
@@ -288,7 +290,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     /**
      * Add a time an value to MeasureTVPType
-     * 
+     *
      * @param measurementTVP
      *            MeasureTVPType XML object
      * @param time
@@ -305,7 +307,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             measurementTVP.addNewMetadata().addNewTVPMeasurementMetadata().addNewNilReason().setNilReason("missing");
         }
     }
-    
+
     private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();

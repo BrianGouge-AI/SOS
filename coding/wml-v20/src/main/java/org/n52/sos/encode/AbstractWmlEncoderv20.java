@@ -34,7 +34,10 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.vividsolutions.jts.geom.Geometry;
 import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.samplingSpatial.x20.ShapeType;
@@ -44,7 +47,6 @@ import net.opengis.waterml.x20.MonitoringPointDocument;
 import net.opengis.waterml.x20.MonitoringPointType;
 import net.opengis.waterml.x20.ObservationProcessDocument;
 import net.opengis.waterml.x20.ObservationProcessType;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
@@ -80,14 +82,9 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaType;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.vividsolutions.jts.geom.Geometry;
-
 /**
  * Abstract encoder class for WaterML 2.0
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 implements ProcedureEncoder<XmlObject, Object> {
@@ -95,17 +92,17 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     @SuppressWarnings("unchecked")
     protected static final Set<EncoderKey> DEFAULT_ENCODER_KEYS = CollectionHelper.union(CodingHelper.encoderKeysForElements(
             WaterMLConstants.NS_WML_20, AbstractFeature.class), CodingHelper.encoderKeysForElements(
-                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, ObservationProcess.class));
-    
+            WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, ObservationProcess.class));
+
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS =
             ImmutableMap.of(
                     SosConstants.SOS,
                     ImmutableMap
-                            .<String, Set<String>> builder()
+                            .<String, Set<String>>builder()
                             .put(Sos2Constants.SERVICEVERSION,
                                     ImmutableSet.of(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)).build());
 
-    
+
     protected static Set<EncoderKey> getDefaultEncoderKeys() {
         return Collections.unmodifiableSet(DEFAULT_ENCODER_KEYS);
     }
@@ -124,7 +121,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     public boolean shouldObservationsWithSameXBeMerged() {
         return true;
     }
-    
+
     @Override
     public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
         if (SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
@@ -178,7 +175,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     /**
      * Encodes a SOS GetObservationResponse to a single WaterML 2.0 observation
      * or to a WaterML 1.0 ObservationCollection
-     * 
+     *
      * @param getObservationResonse
      *            SOS GetObservationResponse
      * @return Encoded response
@@ -241,7 +238,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Creates a WaterML 2.0 MonitoringPoint XML object from SOS feature object
-     * 
+     *
      * @param absFeature
      *            SOS feature
      * @return WaterML 2.0 MonitoringPoint XML object
@@ -283,7 +280,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
             if (sampFeat.isSetIdentifier()
                     && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
-                            Sos2Constants.SERVICEVERSION)) {
+                    Sos2Constants.SERVICEVERSION)) {
                 XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getIdentifierCodeWithAuthority());
                 if (xmlObject != null) {
                     monitoringPoint.addNewIdentifier().set(xmlObject);
@@ -349,7 +346,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     /**
      * Creates an WaterML 2.0 ObservationProcess XML object from SOS
      * ObservationProcess object
-     * 
+     *
      * @param procedure
      *            SOS ObservationProcess
      * @param additionalValues
@@ -371,7 +368,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
             CodeWithAuthority codeWithAuthority = procedure.getIdentifierCodeWithAuthority();
             Encoder<?, CodeWithAuthority> encoder =
                     CodingRepository.getInstance().getEncoder(
-                            CodingHelper.getEncoderKey(GmlConstants.NS_GML_32,codeWithAuthority));
+                            CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, codeWithAuthority));
             if (encoder != null) {
                 XmlObject xmlObject = (XmlObject) encoder.encode(codeWithAuthority);
                 observationProcess.addNewIdentifier().set(xmlObject);
@@ -398,7 +395,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Adds processType value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -421,7 +418,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     /**
      * Adds OriginatingProcess value to WaterML 2.0 ObservationProcess XML
      * object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -442,7 +439,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     /**
      * Adds AggregatingDuration value to WaterML 2.0 ObservationProcess XML
      * object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -453,7 +450,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Adds VerticalDatum value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -473,7 +470,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Adds Comment value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -491,7 +488,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Adds ProcessReference value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -511,7 +508,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Adds Input value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -533,7 +530,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Adds Parameter value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -556,7 +553,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Creates a XML ReferenceType object from SOS ReferenceType object
-     * 
+     *
      * @param sosReferenceType
      *            SOS ReferenceType object
      * @return XML ReferenceType object
@@ -579,7 +576,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     /**
      * Adds parameter values to WaterML 2.0 XML MonitoringPoint object from
      * SosSamplingFeature
-     * 
+     *
      * @param monitoringPoint
      *            WaterML 2.0 XML MonitoringPoint object
      * @param sampFeat
@@ -598,7 +595,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Parses the ITime object to a time representation as String
-     * 
+     *
      * @param time
      *            SOS ITime object
      * @return Time as String
@@ -612,7 +609,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
 
     /**
      * Get the time representation from ITime object
-     * 
+     *
      * @param time
      *            ITime object
      * @return Time as DateTime
