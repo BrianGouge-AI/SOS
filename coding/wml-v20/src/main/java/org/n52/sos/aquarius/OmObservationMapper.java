@@ -1,5 +1,6 @@
 /**
- * Copyright (C) 2012-2015 Aquatic Informatics
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -39,31 +40,25 @@ public class OmObservationMapper {
     private static final String BASE_LOGGER_INTERPOLATION_MAPPING_WARNING =
             "Could not determine aquarius interpolation type";
     private final InterpolationTypeMapper interpolationTypeMapper;
-    private final ObservedPropertyMapper observedPropertyMapper;
 
-    public OmObservationMapper(InterpolationTypeMapper interpolationTypeMapper,
-            ObservedPropertyMapper observedPropertyMapper) {
+    public OmObservationMapper(InterpolationTypeMapper interpolationTypeMapper) {
         this.interpolationTypeMapper = interpolationTypeMapper;
-        this.observedPropertyMapper = observedPropertyMapper;
     }
 
     public String toInterpolationTypeTitle(OmObservation observation) {
         String wml2InterpolationTitle = interpolationTypeMapper.toTitle(DEFAULT_AQUARIUS_INTERPOLATION_TYPE);
 
         if (null != observation && null != observation.getObservationConstellation() &&
-                null != observation.getObservationConstellation().getObservableProperty()) {
+                null != observation.getObservationConstellation().getProcedure()) {
 
-            final String observedPropertyIdentifier =
-                    observation.getObservationConstellation().getObservableProperty().getIdentifier();
-
+            final String procedureIdentifier = observation.getObservationConstellation().getProcedure().getIdentifier();
             final String title = interpolationTypeMapper.toTitle(
-                    observedPropertyMapper.toInterpolationTypeName(observedPropertyIdentifier));
-
+                    mapProcedureIdentifierToInterpolationType(procedureIdentifier));
             if (null != title) {
                 wml2InterpolationTitle = title;
             } else {
                 LOGGER.info(BASE_LOGGER_INTERPOLATION_MAPPING_WARNING +
-                        ": invalid identifier {}", observedPropertyIdentifier);
+                        ": invalid procedure identifier {}", procedureIdentifier);
             }
         } else {
             LOGGER.info(BASE_LOGGER_INTERPOLATION_MAPPING_WARNING + ": invalid observation");
@@ -76,25 +71,37 @@ public class OmObservationMapper {
         String wml2InterpolationHref = interpolationTypeMapper.toHref(DEFAULT_AQUARIUS_INTERPOLATION_TYPE);
 
         if (null != observation && null != observation.getObservationConstellation() &&
-                null != observation.getObservationConstellation().getObservableProperty()) {
+                null != observation.getObservationConstellation().getProcedure()) {
 
-
-            final String observedPropertyIdentifier =
-                    observation.getObservationConstellation().getObservableProperty().getIdentifier();
-
+            final String procedureIdentifier = observation.getObservationConstellation().getProcedure().getIdentifier();
             final String href = interpolationTypeMapper.toHref(
-                    observedPropertyMapper.toInterpolationTypeName(observedPropertyIdentifier));
-
+                    mapProcedureIdentifierToInterpolationType(procedureIdentifier));
             if (null != href) {
                 wml2InterpolationHref = href;
             } else {
                 LOGGER.info(BASE_LOGGER_INTERPOLATION_MAPPING_WARNING +
-                        ": invalid identifier {}", observedPropertyIdentifier);
+                        ": invalid procedure identifier {}", procedureIdentifier);
             }
         } else {
             LOGGER.info(BASE_LOGGER_INTERPOLATION_MAPPING_WARNING + ": invalid observation");
         }
         return wml2InterpolationHref;
+    }
+
+    private String mapProcedureIdentifierToInterpolationType(String procedureIdentifier) {
+        String aquariusInterpolationType = null;
+        if (null != procedureIdentifier && !procedureIdentifier.isEmpty()) {
+            int indexOfSeparationCharacter = procedureIdentifier.lastIndexOf(SEPARATOR_CHARACTER);
+            if (indexOfSeparationCharacter > 0) {
+                aquariusInterpolationType = procedureIdentifier.substring(indexOfSeparationCharacter + 1);
+            } else {
+                LOGGER.info(BASE_LOGGER_INTERPOLATION_MAPPING_WARNING +
+                        ": invalid procedure identifier {}", procedureIdentifier);
+            }
+        } else {
+            LOGGER.info(BASE_LOGGER_INTERPOLATION_MAPPING_WARNING + ": procedure identifier is null/empty.");
+        }
+        return aquariusInterpolationType;
     }
 
 }

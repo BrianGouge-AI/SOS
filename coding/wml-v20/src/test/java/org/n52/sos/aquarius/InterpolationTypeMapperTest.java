@@ -1,5 +1,6 @@
 /**
- * Copyright (C) 2012-2015 Aquatic Informatics
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -27,8 +28,11 @@
  */
 package org.n52.sos.aquarius;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 public class InterpolationTypeMapperTest {
-/* TODO AI: compile
+
     @Test
     public void toHref_withValidInterpolationTypeName_returnsExpectedHref() {
         String expectedHref = "http://www.opengis.net/def/waterml/2.0/interpolationType/AveragePrec";
@@ -42,5 +46,5 @@ public class InterpolationTypeMapperTest {
         final String interpolationTypeHref = new InterpolationTypeMapper().toHref("abc123");
         Assert.assertEquals(expectedHref, interpolationTypeHref);
     }
-*/
+
 }
