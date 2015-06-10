@@ -41,7 +41,8 @@
             <name>GPLv2</name>
             <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
             <distribution>repo</distribution>
-            <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
+            <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.
+            </comments>
         </license>
     </licenses>
     <properties>
@@ -285,10 +286,10 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-	            <groupId>${project.groupId}</groupId>
-	            <artifactId>request-response-coordinate-transformer</artifactId>
-	             <version>${project.version}</version>
-	        </dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>request-response-coordinate-transformer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-controller</artifactId>
@@ -328,15 +329,15 @@
                 <type>war</type>
             </dependency>
             <dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>inspire-code</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-	        	<artifactId>inspire-xml</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-code</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-xml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
@@ -552,20 +553,20 @@
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-gmd-v20120713</artifactId>
-	            <version>${n52.common.xml.version}</version>
-       		</dependency>
-       		<dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-gco-v20120713</artifactId>
-	            <version>${n52.common.xml.version}</version>
-       		</dependency>
-       		<dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-sosgda-v10</artifactId>
-	           <version>${n52.common.xml.version}</version>
-       		</dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gmd-v20120713</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gco-v20120713</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosgda-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-om-v100</artifactId>
@@ -914,10 +915,10 @@
                 <version>15.0</version>
             </dependency>
             <dependency>
-			  <groupId>se.jiderhamn</groupId>
-			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.11.0</version>
-			</dependency>
+                <groupId>se.jiderhamn</groupId>
+                <artifactId>classloader-leak-prevention</artifactId>
+                <version>1.11.0</version>
+            </dependency>
             <!-- third party dialects -->
             <!-- Remove third party ncname resolver from SOS and use OXF instead -->
             <dependency>
@@ -930,49 +931,49 @@
                 <artifactId>xmlunit</artifactId>
                 <version>1.5</version>
             </dependency>
-	        <dependency>
-	            <groupId>com.oracle</groupId>
-	            <artifactId>ojdbc6</artifactId>
-	            <version>${ojdbc6.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.microsoft</groupId>
-	            <artifactId>sqljdbc4</artifactId>
-	            <version>${sqljdbc4.version}</version>
-	        </dependency>            
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>${ojdbc6.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqljdbc4.version}</version>
+            </dependency>
             <!-- geotools -->
-             <dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-epsg-hsql</artifactId>
-				<version>9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-referencing</artifactId>
-				<version>9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-api</artifactId>
-				<version>9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.reflections</groupId>
-				<artifactId>reflections</artifactId>
-				<version>0.9.9-RC1</version>
-			</dependency>
-			<!-- EXI - Efficient XML Interchange -->
-			<dependency>
-				<groupId>com.siemens.ct.exi</groupId>
-				<artifactId>exificient</artifactId>
-				<version>0.9.4</version>
-			</dependency>
-			<dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-epsg-hsql</artifactId>
+                <version>9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-referencing</artifactId>
+                <version>9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-api</artifactId>
+                <version>9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.9-RC1</version>
+            </dependency>
+            <!-- EXI - Efficient XML Interchange -->
+            <dependency>
+                <groupId>com.siemens.ct.exi</groupId>
+                <artifactId>exificient</artifactId>
+                <version>0.9.4</version>
+            </dependency>
+            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
             </dependency>
-			<dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-exi</artifactId>
                 <version>${project.version}</version>
@@ -1009,7 +1010,7 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                        	<dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
+                            <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
                             <!-- Only changing prefix since properties conflicts with jgit above
                             <prefix>git-commit-id</prefix>-->
                             <!-- We're using a pom in this example
@@ -1050,7 +1051,7 @@
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
-                     <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
+                    <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
                 <executions>
@@ -1075,7 +1076,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -1090,8 +1091,9 @@
                             <source>
                                 import java.util.Date
                                 import java.text.MessageFormat
+
                                 def vartimestamp = MessageFormat.format("{0,date,yyyy}", new
-                                Date())
+                                        Date())
                                 project.properties['currentYearDynamic'] = vartimestamp
                             </source>
                         </configuration>
@@ -1106,6 +1108,7 @@
                     <aggregate>true</aggregate>
                     <header>misc/52N_license.txt</header>
                     <excludes>
+                        <exclude>**/aquarius/*</exclude>
                         <exclude>**/log4j*</exclude>
                         <exclude>**/*.xml</exclude>
                         <exclude>**/*.html</exclude>
@@ -1221,9 +1224,9 @@
                     </configuration>
                 </plugin>
                 <plugin>
-	                <groupId>pl.project13.maven</groupId>
-	                <artifactId>git-commit-id-plugin</artifactId>
-	                <version>2.1.9</version>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>2.1.9</version>
                 </plugin>
                 <!-- 
                 <plugin>
@@ -1290,7 +1293,9 @@
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
                     <configuration>
-                        <connectionUrl>scm:svn:https://svn.52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</connectionUrl>
+                        <connectionUrl>
+                            scm:svn:https://svn.52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored
+                        </connectionUrl>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1366,10 +1371,10 @@
             </snapshots>
         </repository>
         <repository>
-			<id>boundless</id>
-			<name>Boundless, formerly OpenGeo</name>
-			<url>http://repo.boundlessgeo.com/main/</url>
-		</repository>
+            <id>boundless</id>
+            <name>Boundless, formerly OpenGeo</name>
+            <url>http://repo.boundlessgeo.com/main/</url>
+        </repository>
     </repositories>
     <profiles>
         <profile>
@@ -1463,16 +1468,16 @@
         </profile>
     </profiles>
     <dependencies>
-    	<dependency>
-    		<groupId>org.mockito</groupId>
-    		<artifactId>mockito-core</artifactId>
-    		<version>1.9.0</version>
-    		<exclusions>
-    			<exclusion>
-    				<artifactId>hamcrest-core</artifactId>
-    				<groupId>org.hamcrest</groupId>
-    			</exclusion>
-    		</exclusions>
-    	</dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hamcrest-core</artifactId>
+                    <groupId>org.hamcrest</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 </project>
