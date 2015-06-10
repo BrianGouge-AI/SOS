@@ -27,80 +27,138 @@
  */
 package org.n52.sos.aquarius;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.wml.ObservationProcess;
+
 public class OmObservationMapperTest {
 
-    // TODO AI: proper mocking, update, compile
-    /*
     @Test
-    public void toInterpolationTypeHref_withObservationWithProcedureIdentifier_returnsExpectedHref() {
+    public void toInterpolationTypeHref_withValidProcedureIdentifier_returnsExpectedHref() {
+        String expectedInterpolationTypeName = "InterpolationTypeName";
+        String procedureIdentifier = "abc123_" + expectedInterpolationTypeName;
+        String expectedHref = "expectedHref";
 
-        String identifier = "Discharge_DayMean";
-        String expectedHref = "http://www.opengis.net/def/waterml/2.0/interpolationType/AveragePrec";
+        ObservationProcess observationProcess = new ObservationProcess();
+        observationProcess.setIdentifier(procedureIdentifier);
+        OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        omObservationConstellation.setProcedure(observationProcess);
+        OmObservation observation = new OmObservation();
+        observation.setObservationConstellation(omObservationConstellation);
 
-        // InterpolationTypeMapper interpolationTypeMapper = Mockito.mock(InterpolationTypeMapper.class);
-        // Mockito.when(interpolationTypeMapper.toHref(Mockito.anyString()))
-        //        .thenReturn(expectedHref);
+        InterpolationTypeMapper interpolationTypeMapperMock =
+                createMockInterpolationTypeMapper(expectedHref, null);
 
-        OmObservationMapper omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper(), new ObservedPropertyMapper());
-        String href = omObservationMapper.toInterpolationTypeHref(makeOmObservation(identifier));
+        OmObservationMapper omObservationMapper = new OmObservationMapper(interpolationTypeMapperMock);
+        String href = omObservationMapper.toInterpolationTypeHref(observation);
 
+        Mockito.verify(interpolationTypeMapperMock).toHref(expectedInterpolationTypeName);
         Assert.assertEquals(expectedHref, href);
     }
 
     @Test
-    public void toInterpolationTypeHref_withObservationWithInvalidProcedureIdentifier_returnsDefaultHref() {
+    public void toInterpolationTypeHref_withProcedureIdentifierWithNoInterpolationType_returnsDefaultHref() {
+        String expectedInterpolationTypeName = null;
+        String procedureIdentifier = "abc123";
+        String expectedHref = "defaultHref";
 
-        String identifier = "InstantTotal";
-        String expectedHref = "http://www.opengis.net/def/waterml/2.0/interpolationType/Continuous";
+        ObservationProcess observationProcess = new ObservationProcess();
+        observationProcess.setIdentifier(procedureIdentifier);
+        OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        omObservationConstellation.setProcedure(observationProcess);
+        OmObservation observation = new OmObservation();
+        observation.setObservationConstellation(omObservationConstellation);
 
-        // InterpolationTypeMapper interpolationTypeMapper = Mockito.mock(InterpolationTypeMapper.class);
-        // Mockito.when(interpolationTypeMapper.toHref(Mockito.anyString()))
-        //        .thenReturn(expectedHref);
+        InterpolationTypeMapper interpolationTypeMapperMock =
+                createMockInterpolationTypeMapper(expectedHref, null);
 
-        OmObservationMapper omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper(), new ObservedPropertyMapper());
-        String href = omObservationMapper.toInterpolationTypeHref(makeOmObservation(identifier));
+        OmObservationMapper omObservationMapper = new OmObservationMapper(interpolationTypeMapperMock);
+        String href = omObservationMapper.toInterpolationTypeHref(observation);
 
+        Mockito.verify(interpolationTypeMapperMock).toHref(expectedInterpolationTypeName);
         Assert.assertEquals(expectedHref, href);
     }
 
     @Test
-    public void toInterpolationTypeHref_withProcedureIdentifierWithMultipleUnderscores_returnsDefaultHref() {
+    public void toInterpolationTypeHref_withProcedureIdentifierWithTrailingUnderscore_returnsDefaultHref() {
+        String expectedInterpolationTypeName = null;
+        String procedureIdentifier = "identifier_";
+        String expectedHref = "defaultHref";
 
-        String identifier = "abc_123_InstantTotal";
-        String expectedHref = "http://www.opengis.net/def/waterml/2.0/interpolationType/InstantTotal";
+        ObservationProcess observationProcess = new ObservationProcess();
+        observationProcess.setIdentifier(procedureIdentifier);
+        OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        omObservationConstellation.setProcedure(observationProcess);
+        OmObservation observation = new OmObservation();
+        observation.setObservationConstellation(omObservationConstellation);
 
-        // InterpolationTypeMapper interpolationTypeMapper = Mockito.mock(InterpolationTypeMapper.class);
-        // Mockito.when(interpolationTypeMapper.toHref(Mockito.anyString()))
-        //        .thenReturn(expectedHref);
+        InterpolationTypeMapper interpolationTypeMapperMock =
+                createMockInterpolationTypeMapper(expectedHref, null);
 
-        OmObservationMapper omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper(), new ObservedPropertyMapper());
-        String href = omObservationMapper.toInterpolationTypeHref(makeOmObservation(identifier));
+        OmObservationMapper omObservationMapper = new OmObservationMapper(interpolationTypeMapperMock);
+        String href = omObservationMapper.toInterpolationTypeHref(observation);
 
+        Mockito.verify(interpolationTypeMapperMock).toHref(expectedInterpolationTypeName);
         Assert.assertEquals(expectedHref, href);
     }
 
     @Test
-    public void toInterpolationTypeTitle_withObservationWithProcedureIdentifier_returnsExpectedHref() {
-        String identifier = "abc123_InstantTotal";
-        String expectedTitle = "InstantTotal";
+    public void toInterpolationTypeHref_withProcedureIdentifierWithMultipleUnderscores_returnsCorrectHref() {
+        String expectedInterpolationTypeName = "InterpolationTypeName";
+        String procedureIdentifier = "abc_123_" + expectedInterpolationTypeName;
+        String expectedHref = "expectedHref";
 
-        // InterpolationTypeMapper interpolationTypeMapper = Mockito.mock(InterpolationTypeMapper.class);
-        // Mockito.when(interpolationTypeMapper.toHref(Mockito.anyString()))
-        //        .thenReturn(expectedHref);
+        ObservationProcess observationProcess = new ObservationProcess();
+        observationProcess.setIdentifier(procedureIdentifier);
+        OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        omObservationConstellation.setProcedure(observationProcess);
+        OmObservation observation = new OmObservation();
+        observation.setObservationConstellation(omObservationConstellation);
 
-        OmObservationMapper omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper(), new ObservedPropertyMapper());
-        String title = omObservationMapper.toInterpolationTypeTitle(makeOmObservation(identifier));
+        InterpolationTypeMapper interpolationTypeMapperMock =
+                createMockInterpolationTypeMapper(expectedHref, null);
 
+        OmObservationMapper omObservationMapper = new OmObservationMapper(interpolationTypeMapperMock);
+        String href = omObservationMapper.toInterpolationTypeHref(observation);
+
+        Mockito.verify(interpolationTypeMapperMock).toHref(expectedInterpolationTypeName);
+        Assert.assertEquals(expectedHref, href);
+    }
+
+    @Test
+    public void toInterpolationTypeTitle_withValidProcedureIdentifier_returnsExpectedTitle() {
+
+        String expectedInterpolationTypeName = "InterpolationTypeName";
+        String procedureIdentifier = "abc123_" + expectedInterpolationTypeName;
+        String expectedTitle = "expectedTitle";
+
+        ObservationProcess observationProcess = new ObservationProcess();
+        observationProcess.setIdentifier(procedureIdentifier);
+        OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        omObservationConstellation.setProcedure(observationProcess);
+        OmObservation observation = new OmObservation();
+        observation.setObservationConstellation(omObservationConstellation);
+
+        InterpolationTypeMapper interpolationTypeMapperMock =
+                createMockInterpolationTypeMapper(null, expectedTitle);
+
+        OmObservationMapper omObservationMapper = new OmObservationMapper(interpolationTypeMapperMock);
+        String title = omObservationMapper.toInterpolationTypeTitle(observation);
+
+        Mockito.verify(interpolationTypeMapperMock).toTitle(expectedInterpolationTypeName);
         Assert.assertEquals(expectedTitle, title);
     }
 
-    private OmObservation makeOmObservation(String identifier) {
-        OmObservableProperty omObservableProperty = new OmObservableProperty(identifier);
-        OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
-        omObservationConstellation.setObservableProperty(omObservableProperty);
-        OmObservation observation = new OmObservation();
-        observation.setObservationConstellation(omObservationConstellation);
-        return observation;
+    private InterpolationTypeMapper createMockInterpolationTypeMapper(String expectedHref, String expectedTitle) {
+        InterpolationTypeMapper interpolationTypeMapperMock = Mockito.mock(InterpolationTypeMapper.class);
+        Mockito.when(interpolationTypeMapperMock.toHref(Mockito.anyString()))
+                .thenReturn(expectedHref);
+        Mockito.when(interpolationTypeMapperMock.toTitle(Mockito.anyString()))
+                .thenReturn(expectedTitle);
+        return interpolationTypeMapperMock;
     }
-*/
+
 }

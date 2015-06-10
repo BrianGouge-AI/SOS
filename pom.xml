@@ -939,7 +939,7 @@
 	            <groupId>com.microsoft</groupId>
 	            <artifactId>sqljdbc4</artifactId>
 	            <version>${sqljdbc4.version}</version>
-	        </dependency>            
+	        </dependency>
             <!-- geotools -->
              <dependency>
 				<groupId>org.geotools</groupId>
@@ -1075,7 +1075,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -1106,6 +1106,7 @@
                     <aggregate>true</aggregate>
                     <header>misc/52N_license.txt</header>
                     <excludes>
+                        <exclude>**/aquarius/*</exclude>
                         <exclude>**/log4j*</exclude>
                         <exclude>**/*.xml</exclude>
                         <exclude>**/*.html</exclude>

@@ -45,7 +45,6 @@ import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
 import net.opengis.waterml.x20.TVPMeasurementMetadataType;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.aquarius.InterpolationTypeMapper;
-import org.n52.sos.aquarius.ObservedPropertyMapper;
 import org.n52.sos.aquarius.OmObservationMapper;
 import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -108,7 +107,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     public WmlTVPEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
-        omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper(), new ObservedPropertyMapper());
+        omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper());
     }
 
     @SuppressWarnings("unchecked")
