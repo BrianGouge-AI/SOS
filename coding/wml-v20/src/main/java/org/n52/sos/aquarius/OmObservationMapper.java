@@ -91,7 +91,7 @@ public class OmObservationMapper {
         String aquariusInterpolationType = null;
         if (null != procedureIdentifier && !procedureIdentifier.isEmpty()) {
             int indexOfSeparationCharacter = procedureIdentifier.lastIndexOf(SEPARATOR_CHARACTER);
-            if ((indexOfSeparationCharacter > 0) & (indexOfSeparationCharacter < (procedureIdentifier.length() - 1))) {
+            if ((indexOfSeparationCharacter > 0) && (indexOfSeparationCharacter < (procedureIdentifier.length() - 1))) {
                 aquariusInterpolationType = procedureIdentifier.substring(indexOfSeparationCharacter + 1);
             } else {
                 LOGGER.info(BASE_LOGGER_INTERPOLATION_MAPPING_WARNING +
