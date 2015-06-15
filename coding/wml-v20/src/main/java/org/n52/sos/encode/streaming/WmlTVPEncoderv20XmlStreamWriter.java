@@ -168,6 +168,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     /**
      * Write wml:defaultPointMetadata to stream
      *
+     * @param unit
      * @param observation
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
