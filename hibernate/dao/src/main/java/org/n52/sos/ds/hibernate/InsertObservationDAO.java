@@ -86,7 +86,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
     private final FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
 
-    private static final int FLUSH_THRESHOLD = 50;
+    private static final int FLUSH_THRESHOLD = 10;
 
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
 
