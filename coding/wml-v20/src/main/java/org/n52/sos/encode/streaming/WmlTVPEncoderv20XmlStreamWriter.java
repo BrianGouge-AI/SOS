@@ -31,6 +31,8 @@ package org.n52.sos.encode.streaming;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.n52.sos.aquarius.InterpolationTypeMapper;
+import org.n52.sos.aquarius.OmObservationMapper;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.MultiObservationValues;
@@ -59,11 +61,14 @@ import org.n52.sos.w3c.W3CConstants;
  */
 public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWriter {
 
+    private final OmObservationMapper omObservationMapper;
+
     /**
      * constructor
      */
     public WmlTVPEncoderv20XmlStreamWriter() {
         super();
+        omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper());
     }
 
     /**
@@ -74,6 +79,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      */
     public WmlTVPEncoderv20XmlStreamWriter(OmObservation observation) {
         super(observation);
+        omObservationMapper = new OmObservationMapper(new InterpolationTypeMapper());
     }
 
     @Override
@@ -92,7 +98,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
         if (observation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> observationValue = (SingleObservationValue<?>) observation.getValue();
-            writeDefaultPointMetadata(observationValue.getValue().getUnit());
+            writeDefaultPointMetadata(observation);
             writeNewLine();
             String time = getTimeString(observationValue.getPhenomenonTime());
             writePoint(time, getValue(observation.getValue().getValue()));
@@ -100,7 +106,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             close();
         } else if (observation.getValue() instanceof MultiObservationValues) {
             MultiObservationValues<?> observationValue = (MultiObservationValues<?>) observation.getValue();
-            writeDefaultPointMetadata(observationValue.getValue().getUnit());
+            writeDefaultPointMetadata(observation);
             writeNewLine();
             TVPValue tvpValue = (TVPValue) observationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
@@ -111,7 +117,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             close();
         } else if (observation.getValue() instanceof StreamingValue) {
             StreamingValue observationValue = (StreamingValue) observation.getValue();
-            writeDefaultPointMetadata(observationValue.getUnit());
+            writeDefaultPointMetadata(observation);
             writeNewLine();
             while (observationValue.hasNextValue()) {
                 TimeValuePair timeValuePair = observationValue.nextValue();
@@ -164,18 +170,18 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     /**
      * Write wml:defaultPointMetadata to stream
      *
-     * @param unit
+     * @param observation
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void writeDefaultPointMetadata(String unit) throws XMLStreamException {
+    private void writeDefaultPointMetadata(OmObservation observation) throws XMLStreamException {
         start(WaterMLConstants.QN_DEFAULT_POINT_METADATA);
         writeNewLine();
         start(WaterMLConstants.QN_DEFAULT_TVP_MEASUREMENT_METADATA);
         writeNewLine();
-        writeUOM(unit);
+        writeUOM(observation.getValue().getValue().getUnit());
         writeNewLine();
-        writeInterpolationType();
+        writeInterpolationType(observation);
         writeNewLine();
         indent--;
         end(WaterMLConstants.QN_DEFAULT_TVP_MEASUREMENT_METADATA);
@@ -202,13 +208,14 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     /**
      * Write wml:interpolationType to stream
      *
+     * @param observation
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void writeInterpolationType() throws XMLStreamException {
+    private void writeInterpolationType(OmObservation observation) throws XMLStreamException {
         empty(WaterMLConstants.QN_INTERPOLATION_TYPE);
-        addXlinkHrefAttr("http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
-        addXlinkTitleAttr("Instantaneous");
+        addXlinkHrefAttr(omObservationMapper.toInterpolationTypeHref(observation));
+        addXlinkTitleAttr(omObservationMapper.toInterpolationTypeTitle(observation));
     }
 
     /**
