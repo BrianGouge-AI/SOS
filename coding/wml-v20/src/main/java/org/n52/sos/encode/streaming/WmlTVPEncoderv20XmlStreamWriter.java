@@ -94,11 +94,9 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         writeMeasurementTimeseriesMetadata(observation.getPhenomenonTime().getGmlId());
         writeNewLine();
 
-        //TODO: AI add support for interpolation types
-
         if (observation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> observationValue = (SingleObservationValue<?>) observation.getValue();
-            writeDefaultPointMetadata(observation);
+            writeDefaultPointMetadata(observationValue.getValue().getUnit(), observation);
             writeNewLine();
             String time = getTimeString(observationValue.getPhenomenonTime());
             writePoint(time, getValue(observation.getValue().getValue()));
@@ -106,7 +104,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             close();
         } else if (observation.getValue() instanceof MultiObservationValues) {
             MultiObservationValues<?> observationValue = (MultiObservationValues<?>) observation.getValue();
-            writeDefaultPointMetadata(observation);
+            writeDefaultPointMetadata(observationValue.getValue().getUnit(), observation);
             writeNewLine();
             TVPValue tvpValue = (TVPValue) observationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
@@ -117,7 +115,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             close();
         } else if (observation.getValue() instanceof StreamingValue) {
             StreamingValue observationValue = (StreamingValue) observation.getValue();
-            writeDefaultPointMetadata(observation);
+            writeDefaultPointMetadata(observationValue.getUnit(), observation);
             writeNewLine();
             while (observationValue.hasNextValue()) {
                 TimeValuePair timeValuePair = observationValue.nextValue();
@@ -174,12 +172,12 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void writeDefaultPointMetadata(OmObservation observation) throws XMLStreamException {
+    private void writeDefaultPointMetadata(String unit, OmObservation observation) throws XMLStreamException {
         start(WaterMLConstants.QN_DEFAULT_POINT_METADATA);
         writeNewLine();
         start(WaterMLConstants.QN_DEFAULT_TVP_MEASUREMENT_METADATA);
         writeNewLine();
-        writeUOM(observation.getValue().getValue().getUnit());
+        writeUOM(unit);
         writeNewLine();
         writeInterpolationType(observation);
         writeNewLine();
